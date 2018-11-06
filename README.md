@@ -1,4 +1,4 @@
-## Introduction
+## note
 ### react version
 16.7.0-alpha.0
 
