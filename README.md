@@ -1,3 +1,17 @@
+## Introduction
+### react version
+16.7.0-alpha.0
+
+### hook-api used
+* useState
+* useEffect
+* useReducer
+
+### case
+* input component
+* carousel component
+* todo component
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
