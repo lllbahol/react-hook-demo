@@ -1,13 +1,14 @@
 import React, { useReducer } from 'react';
+
 import FormItem from './FormItem';
+import ShowBtn from './ShowBtn';
 
 import './index.css';
 
+export const ReducerContext = React.createContext(null);
+
 export default () => {
   const [state, displatch] = useReducer(reducer, initialState);
-  const handleShow = (value) => {
-    displatch({ type: 'changeshow', value });
-  }
   const filteredData = [...state.data.entries()].filter(([key, value]) => {
       if (state.show === 'actived') {
         return !value.completed;
@@ -19,43 +20,41 @@ export default () => {
     });
 
   return (
-    <div className="form-wrapper">
-      <h2>todo</h2>
-      <input
-        onKeyDown={(e) => {
-          if (e.keyCode === 13 && e.target.value) {
-            displatch({
-              type: 'add',
-              key: new Date().getTime(),
-              value: e.target.value,
-            });
-            e.target.value = '';
-          }
-        }}
-      />
-      {
-        filteredData.map(([key, value]) =>
-          <FormItem
-            key={key}
-            handleRemove={() => displatch({ type: 'remove', key })}
-            handleComplete={() => displatch({ type: 'complete', key })}
-            handleEdit={(v) => displatch({ type: 'edit', value: v, key })}
-            {...value}
-          />
-        )
-      }
-      <div className="btns">
+    <ReducerContext.Provider value={{ displatch, state }}>
+      <div className="form-wrapper">
+        <h2>todo</h2>
+        <input
+          onKeyDown={(e) => {
+            if (e.keyCode === 13 && e.target.value) {
+              displatch({
+                type: 'add',
+                key: new Date().getTime(),
+                value: e.target.value,
+              });
+              e.target.value = '';
+            }
+          }}
+        />
         {
-          ['all', 'actived', 'completed'].map((d) => (
-            <button
-              key={d}
-              className={state.show === d ? 'active' : ''}
-              onClick={() => { handleShow(d) }}
-            >{d}</button>
-          ))
+          filteredData.map(([key, value]) =>
+            <FormItem
+              key={key}
+              handleRemove={() => displatch({ type: 'remove', key })}
+              handleComplete={() => displatch({ type: 'complete', key })}
+              handleEdit={(v) => displatch({ type: 'edit', value: v, key })}
+              {...value}
+            />
+          )
         }
+        <div className="btns">
+          {
+            ['all', 'actived', 'completed'].map((d) => (
+              <ShowBtn key={d} text={d} />
+            ))
+          }
+        </div>
       </div>
-    </div>
+    </ReducerContext.Provider>
   );
 }
 
@@ -92,6 +91,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         show: action.value,
+      }
+    case 'resetshow':
+      return {
+        ...state,
+        show: 'all',
       }
     default:
       return state;
