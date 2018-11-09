@@ -1,14 +1,15 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 
 import FormItem from './FormItem';
 import ShowBtn from './ShowBtn';
+import useTodoReducer from './useTodoReducer';
 
 import './index.css';
 
 export const ReducerContext = React.createContext(null);
 
 export default () => {
-  const [state, displatch] = useReducer(reducer, initialState);
+  const [ state, dispatch ] = useTodoReducer();
   const filteredData = [...state.data.entries()].filter(([key, value]) => {
       if (state.show === 'actived') {
         return !value.completed;
@@ -20,13 +21,13 @@ export default () => {
     });
 
   return (
-    <ReducerContext.Provider value={{ displatch, state }}>
+    <ReducerContext.Provider value={{ dispatch, state }}>
       <div className="form-wrapper">
         <h2>todo</h2>
         <input
           onKeyDown={(e) => {
             if (e.keyCode === 13 && e.target.value) {
-              displatch({
+              dispatch({
                 type: 'add',
                 key: new Date().getTime(),
                 value: e.target.value,
@@ -39,9 +40,9 @@ export default () => {
           filteredData.map(([key, value]) =>
             <FormItem
               key={key}
-              handleRemove={() => displatch({ type: 'remove', key })}
-              handleComplete={() => displatch({ type: 'complete', key })}
-              handleEdit={(v) => displatch({ type: 'edit', value: v, key })}
+              handleRemove={() => dispatch({ type: 'remove', key })}
+              handleComplete={() => dispatch({ type: 'complete', key })}
+              handleEdit={(v) => dispatch({ type: 'edit', value: v, key })}
               {...value}
             />
           )
@@ -57,50 +58,4 @@ export default () => {
     </ReducerContext.Provider>
   );
 }
-
-const initialState = {
-  data: new Map(),
-  show: 'all',
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'add':
-      return {
-        ...state,
-        data: state.data.set(action.key, { value: action.value, completed: false })
-      };
-    case 'remove':
-      // 不太好
-      state.data.delete(action.key)
-      return {
-        ...state,
-        data: state.data,
-      }
-    case 'complete':
-      return {
-        ...state,
-        data: state.data.set(action.key, { ...state.data.get(action.key), completed: !state.data.get(action.key).completed })
-      };
-    case 'edit':
-      return {
-        ...state,
-        data: state.data.set(action.key, { ...state.data.get(action.key), value: action.value })
-      };
-    case 'changeshow':
-      return {
-        ...state,
-        show: action.value,
-      }
-    case 'resetshow':
-      return {
-        ...state,
-        show: 'all',
-      }
-    default:
-      return state;
-  }
-}
-
-
 

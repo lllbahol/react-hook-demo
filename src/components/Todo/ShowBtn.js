@@ -5,9 +5,9 @@ import { ReducerContext } from './index';
 export default ({ text }) => {
   // useContext之后相当于组件被consumer包了
   // 可获得consumer中包含的所有数据
-  const { displatch, state } = useContext(ReducerContext);
+  const { dispatch, state } = useContext(ReducerContext);
   const handleShow = (value) => {
-    displatch({ type: 'changeshow', value });
+    dispatch({ type: 'changeshow', value });
   }
   return (
     <button
