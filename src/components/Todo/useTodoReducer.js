@@ -1,48 +1,30 @@
 import { useReducer } from 'react';
-
+import { fromJS } from 'immutable';
 
 const initialState = {
-  data: new Map(),
+  data: fromJS({}),
   show: 'all',
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'add':
-      return {
-        ...state,
-        data: state.data.set(action.key, { value: action.value, completed: false })
-      };
+      return state
+        .setIn(['data', String(action.key)], fromJS({ value: action.value, completed: false }))
     case 'remove':
-      // 不太好
-      state.data.delete(action.key)
-      return {
-        ...state,
-        data: state.data,
-      }
+      return state
+        .removeIn(['data', action.key]);
     case 'complete':
-      return {
-        ...state,
-        data: state.data.set(action.key, { ...state.data.get(action.key), completed: !state.data.get(action.key).completed })
-      };
+      return state
+        .updateIn(['data', action.key, 'completed'], d => !d);
     case 'edit':
-      return {
-        ...state,
-        data: state.data.set(action.key, { ...state.data.get(action.key), value: action.value })
-      };
+      return state
+       .setIn(['data', action.key, 'value'], action.value);
     case 'changeshow':
-      return {
-        ...state,
-        show: action.value,
-      }
-    case 'resetshow':
-      return {
-        ...state,
-        show: 'all',
-      }
+      return state.set('show', action.value);
     default:
       return state;
   }
 }
 
-export default () => useReducer(reducer, initialState);
+export default () => useReducer(reducer, fromJS(initialState));

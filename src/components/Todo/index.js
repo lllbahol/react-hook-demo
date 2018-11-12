@@ -10,11 +10,12 @@ export const ReducerContext = React.createContext(null);
 
 export default () => {
   const [ state, dispatch ] = useTodoReducer();
-  const filteredData = [...state.data.entries()].filter(([key, value]) => {
-      if (state.show === 'actived') {
+  const filteredData = Object.entries(state.get('data').toJS())
+    .filter(([key, value]) => {
+      if (state.get('show') === 'actived') {
         return !value.completed;
       }
-      if (state.show === 'completed') {
+      if (state.get('show') === 'completed') {
         return value.completed;
       }
       return true;

@@ -11,7 +11,7 @@ export default ({ text }) => {
   }
   return (
     <button
-      className={state.show === text ? 'active' : ''}
+      className={state.get('show') === text ? 'active' : ''}
       onClick={() => { handleShow(text) }}
     >{text}</button>
   );
